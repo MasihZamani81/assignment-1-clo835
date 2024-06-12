@@ -10,13 +10,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
       - name: Setup Node.js 20
         uses: actions/setup-node@v3
         with:
           node-version: 20
-
-      - name: Checkout code
-        uses: actions/checkout@v3
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
@@ -44,7 +44,7 @@ jobs:
 
       - name: Build and push app image
         run: |
-          docker build -t myapp:latest -f Dockerfile .
+          docker buildx build -t myapp:latest -f Dockerfile --push .
           docker tag myapp:latest 808973727775.dkr.ecr.us-east-1.amazonaws.com/myapp:latest
           docker push 808973727775.dkr.ecr.us-east-1.amazonaws.com/myapp:latest
         env:
@@ -53,7 +53,7 @@ jobs:
 
       - name: Build and push db image
         run: |
-          docker build -t mydb:latest -f Dockerfile.db .
+          docker buildx build -t mydb:latest -f Dockerfile.db --push .
           docker tag mydb:latest 808973727775.dkr.ecr.us-east-1.amazonaws.com/mydb:latest
           docker push 808973727775.dkr.ecr.us-east-1.amazonaws.com/mydb:latest
         env:
